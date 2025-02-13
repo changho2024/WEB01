@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Get Current Model</title>
+    <script src="/creojsweb/pfcUtils.js"></script>
+    <script src="../jscript/wl_header.js">
+        document.writeln("Error loading Pro/Web.Link header!");
+    </script>
+    <script language="JavaScript">
+        function WlModelGetCurrent() {
+            try {
+                // Creo Session 및 Model 확인
+                let session = pfcGetCurrentSession();
+                if (!session) {
+                    alert("Creo Session을 가져올 수 없습니다. Creo가 실행 중인지 확인해주세요.");
+                    return;
+                }
+
+                let model = session.GetActiveModel();
+                if (!model) {
+                    alert("활성화된 모델이 없습니다. 모델을 열어주세요.");
+                    return;
+                }
+
+                // 모델 이름 표시
+                document.getElementById("modelName").value = model.FileName;
+
+            } catch (error) {
+                alert("오류가 발생했습니다: " + error.message);
+                console.error("오류 내용:", error);
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+
+        .container {
+            border: 1px solid #ccc;
+            padding: 20px;
+            width: 600px;
+        }
+
+        .input-container {
+            margin-top: 10px;
+        }
+
+        button {
+            padding: 6px 25px;
+            font-size: 16px;
+            margin-top: 10px;
+        }
+
+        input[type="text"] {
+            width: 400px;
+            padding: 10px;
+            font-size: 14px;
+            box-sizing: border-box;
+        }
+    </style>
+
+</head>
+
+<body>
+    <div class="container">
+        <h3>Get Current Model</h3>
+        <div class="input-container">
+            <label for="modelName">Model Name:</label>
+            <input type="text" id="modelName" readonly>
+        </div>
+        <button onclick="WlModelGetCurrent()">Get Current Model</button> <button onclick="clearModelName()">Clear Model Name</button>
+    </div>
+
+    <script>
+        function clearModelName() {
+            document.getElementById("modelName").value = "";
+        }
+    </script>
+</body>
+
+</html>
