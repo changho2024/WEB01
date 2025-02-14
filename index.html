@@ -1,87 +1,139 @@
 <!DOCTYPE html>
 <html lang="ko">
-
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Get Current Model</title>
-    <script src="/creojsweb/pfcUtils.js"></script>
-    <script src="../jscript/wl_header.js">
-        document.writeln("Error loading Pro/Web.Link header!");
-    </script>
-    <script language="JavaScript">
-        function WlModelGetCurrent() {
-            try {
-                // Creo Session 및 Model 확인
-                let session = pfcGetCurrentSession();
-                if (!session) {
-                    alert("Creo Session을 가져올 수 없습니다. Creo가 실행 중인지 확인해주세요.");
-                    return;
-                }
+  <meta charset="UTF-8" />
+  <title>Creo.js Test</title>
+  <style>
+    /* 초기 스타일 */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: sans-serif;
+    }
 
-                let model = session.GetActiveModel();
-                if (!model) {
-                    alert("활성화된 모델이 없습니다. 모델을 열어주세요.");
-                    return;
-                }
+    /* 헤더 - 중앙 정렬 */
+    .header {
+      text-align: center;
+      border-bottom: 1px solid #000;
+      padding: 15px 0;
+    }
+    .header h1 {
+      font-size: 2em;
+    }
 
-                // 모델 이름 표시
-                document.getElementById("modelName").value = model.FileName;
+    /* 메인 영역: 왼쪽 사이드바 + 오른쪽 콘텐츠 */
+    .main {
+      display: flex;
+      height: calc(100vh - 60px); /* 헤더 높이를 뺀 전체 높이 */
+    }
 
-            } catch (error) {
-                alert("오류가 발생했습니다: " + error.message);
-                console.error("오류 내용:", error);
-            }
-        }
-    </script>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-        }
+    /* 왼쪽 사이드바 */
+    .sidebar {
+      width: 200px;
+      border-right: 1px solid #000; /* 세로 구분선 */
+      padding: 20px;
+      background-color: #0a5b7f; /* 예시 파란 배경 */
+    }
+    .app {
+      background-color: #0a5b7f;
+      color: #fff;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      padding: 10px 0;
+      margin-bottom: 15px;
+      text-align: center;
+      cursor: pointer;
+    }
+    .app:hover {
+      background-color: #084b6b;
+    }
 
-        .container {
-            border: 1px solid #ccc;
-            padding: 20px;
-            width: 600px;
-        }
+    /* 오른쪽 콘텐츠 영역 */
+    .content {
+      flex: 1;
+      display: flex;           /* 가운데 정렬을 위해 flex 사용 */
+      justify-content: center; /* 수평 중앙 정렬 */
+      align-items: center;     /* 수직 중앙 정렬 */
+    }
 
-        .input-container {
-            margin-top: 10px;
-        }
+    /* 빨간색 타원 영역 */
+    .ellipse {
+      width: 500px;
+      height: 300px;
+      border: 2px solid red;
+      border-radius: 50%;
+      display: flex;           /* 안쪽 내용도 가운데 정렬 */
+      justify-content: center; 
+      align-items: center;
+      text-align: center;      /* 텍스트 가운데 정렬 */
+    }
 
-        button {
-            padding: 6px 25px;
-            font-size: 16px;
-            margin-top: 10px;
-        }
-
-        input[type="text"] {
-            width: 400px;
-            padding: 10px;
-            font-size: 14px;
-            box-sizing: border-box;
-        }
-    </style>
-
+    /* 타원 내부 컨텐츠 */
+    #content-area {
+      padding: 20px;
+    }
+  </style>
 </head>
-
 <body>
-    <div class="container">
-        <h3>Get Current Model</h3>
-        <div class="input-container">
-            <label for="modelName">Model Name:</label>
-            <input type="text" id="modelName" readonly>
-        </div>
-        <button onclick="WlModelGetCurrent()">Get Current Model</button> <button onclick="clearModelName()">Clear Model Name</button>
+  <!-- 상단 헤더 -->
+  <div class="header">
+    <h1>Creo.js test</h1>
+  </div>
+
+  <!-- 메인(왼쪽 사이드바 + 오른쪽 콘텐츠) -->
+  <div class="main">
+    <!-- 왼쪽 사이드바 -->
+    <div class="sidebar">
+      <div class="app" onclick="showContent('APP01')">APP01</div>
+      <div class="app" onclick="showContent('APP02')">APP02</div>
+      <div class="app" onclick="showContent('APP03')">APP03</div>
     </div>
 
-    <script>
-        function clearModelName() {
-            document.getElementById("modelName").value = "";
-        }
-    </script>
-</body>
+    <!-- 오른쪽 콘텐츠 영역 -->
+    <div class="content">
+      <!-- 빨간색 타원 -->
+      <div class="ellipse">
+        <div id="content-area">
+          <!-- 버튼 클릭 시 이곳에 내용이 표시됩니다. -->
+          <p style="color: gray;">여기를 클릭해도 아무 일도 일어나지 않습니다.<br>
+          왼쪽 버튼을 클릭해 보세요.</p>
+        </div>
+      </div>
+    </div>
+  </div>
 
+  <!-- JavaScript -->
+  <script>
+    function showContent(appName) {
+      const contentArea = document.getElementById('content-area');
+      
+      switch (appName) {
+        case 'APP01':
+          contentArea.innerHTML = `
+            <h2>APP01 내용</h2>
+            <p>이곳에 APP01 관련 정보를 표시할 수 있습니다.</p>
+          `;
+          break;
+        case 'APP02':
+          contentArea.innerHTML = `
+            <h2>APP02 내용</h2>
+            <p>이곳에 APP02 관련 정보를 표시할 수 있습니다.</p>
+          `;
+          break;
+        case 'APP03':
+          contentArea.innerHTML = `
+            <h2>APP03 내용</h2>
+            <p>이곳에 APP03 관련 정보를 표시할 수 있습니다.</p>
+          `;
+          break;
+        default:
+          contentArea.innerHTML = `<p>잘못된 요청입니다.</p>`;
+          break;
+      }
+    }
+  </script>
+</body>
 </html>
