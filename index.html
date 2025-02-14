@@ -7,7 +7,7 @@
     /* full을 부모 크기에 맞게 자동 확장 */
     #full {
         width: 100%;
-        height: 100vh; /* 전체 화면 높이 */
+        height: 100vh;
         background-color: grey;
     }
     
@@ -16,15 +16,13 @@
         width: 100%;
         height: 100px;
         background-color: white;
-        border-bottom: 2px solid black; /* 하단 경계선 추가 */
-        
-        /* 텍스트 중앙 정렬 */
+        border-bottom: 2px solid black;
         display: flex;
         justify-content: center;
         align-items: center;
-        font-size: 16pt; /* 글자 크기 16pt */
-        font-weight: bold; /* 글자 강조 */
-        position: relative; /* 날짜 위치 조정 */
+        font-size: 16pt;
+        font-weight: bold;
+        position: relative;
     }
 
     /* 날짜 스타일 */
@@ -47,7 +45,7 @@
 
     #content {
         width: 100%;
-        height: calc(100vh - 100px); /* top을 제외한 나머지 높이 */
+        height: calc(100vh - 100px);
         display: flex;
     }
 
@@ -55,7 +53,7 @@
         width: 200px;
         height: 100%;
         background-color: white;
-        border-right: 1px solid black; /* 오른쪽 경계선 추가 */
+        border-right: 1px solid black;
         display: flex;
         flex-direction: column;
         align-items: center;
@@ -68,27 +66,27 @@
         height: 40px;
         font-size: 14pt;
         font-weight: bold;
-        background-color: white; /* 버튼 배경 흰색 */
+        background-color: white;
         border: 1px solid black;
-        border-radius: 10px; /* 버튼 모서리 둥글게 */
+        border-radius: 10px;
         cursor: pointer;
         margin-bottom: 10px;
         transition: background-color 0.3s ease, transform 0.1s ease;
     }
 
     .app-button:hover {
-        background-color: gray; /* 마우스 오버 시 배경색 */
+        background-color: gray;
     }
 
     .app-button:active {
-        transform: scale(0.95); /* 클릭 시 버튼이 살짝 줄어드는 효과 */
+        transform: scale(0.95);
     }
 
     #screenright {
-        flex-grow: 1; /* 남은 공간 차지 */
+        flex-grow: 1;
         height: 100%;
         background-color: white;
-        border-left: 1px solid black; /* 왼쪽 경계선 추가 */
+        border-left: 1px solid black;
     }
 
     /* iframe 스타일 */
@@ -103,12 +101,13 @@
     <div id="full">
         <div id="top">
             Creo.JS 테스트에 오신것을 환영합니다!
-            <div id="time"></div> <!-- 시간을 표시할 요소 -->
-            <div id="date"></div> <!-- 날짜를 표시할 요소 -->
+            <div id="time"></div>
+            <div id="date"></div>
         </div>
         <div id="content">
             <!-- 왼쪽 메뉴 -->
             <div id="screen_left">
+                <button class="app-button" onclick="loadApp('home.html')">Home</button>
                 <button class="app-button" onclick="loadApp('app01.html')">APP01</button>
             </div>
             <!-- 오른쪽 화면 -->
@@ -125,17 +124,17 @@
             return days[dayIndex];
         }
 
-        // 오늘 날짜 가져오기 (YYYY-MM-DD (요일) 형식)
+        // 오늘 날짜 가져오기
         function getTodayDate() {
             const today = new Date();
             const year = today.getFullYear();
-            const month = String(today.getMonth() + 1).padStart(2, '0'); // 월 (2자리)
-            const day = String(today.getDate()).padStart(2, '0'); // 일 (2자리)
+            const month = String(today.getMonth() + 1).padStart(2, '0');
+            const day = String(today.getDate()).padStart(2, '0');
             const dayOfWeek = getKoreanDayOfWeek(today.getDay());
             return `${year}-${month}-${day} (${dayOfWeek})`;
         }
 
-        // 현재 시간 가져오기 (HH:MM:SS 형식)
+        // 현재 시간 가져오기
         function getCurrentTime() {
             const now = new Date();
             const hours = String(now.getHours()).padStart(2, '0');
@@ -144,20 +143,20 @@
             return `${hours}:${minutes}:${seconds}`;
         }
 
-        // 시간 업데이트 함수 (1초마다 실행)
+        // 시간 업데이트 함수
         function updateTime() {
             document.getElementById('time').innerText = getCurrentTime();
         }
 
-        // APP01 실행 함수
+        // APP 로드 함수
         function loadApp(url) {
             document.getElementById('appFrame').src = url;
         }
 
-        // 페이지 로드 시 날짜와 시간 설정
+        // 페이지 로드 시 초기 설정
         document.getElementById('date').innerText = getTodayDate();
-        updateTime(); // 초기 시간 표시
-        setInterval(updateTime, 1000); // 1초마다 시간 갱신
+        updateTime();
+        setInterval(updateTime, 1000);
     </script>
 </body>
 </html>
