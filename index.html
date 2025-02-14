@@ -1,139 +1,163 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html>
 <head>
-  <meta charset="UTF-8" />
-  <title>Creo.js Test</title>
-  <style>
-    /* 초기 스타일 */
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<style>
+    /* full을 부모 크기에 맞게 자동 확장 */
+    #full {
+        width: 100%;
+        height: 100vh; /* 전체 화면 높이 */
+        background-color: grey;
     }
-    body {
-      font-family: sans-serif;
-    }
-
-    /* 헤더 - 중앙 정렬 */
-    .header {
-      text-align: center;
-      border-bottom: 1px solid #000;
-      padding: 15px 0;
-    }
-    .header h1 {
-      font-size: 2em;
-    }
-
-    /* 메인 영역: 왼쪽 사이드바 + 오른쪽 콘텐츠 */
-    .main {
-      display: flex;
-      height: calc(100vh - 60px); /* 헤더 높이를 뺀 전체 높이 */
+    
+    /* 상단 영역 */
+    #top {
+        width: 100%;
+        height: 100px;
+        background-color: white;
+        border-bottom: 2px solid black; /* 하단 경계선 추가 */
+        
+        /* 텍스트 중앙 정렬 */
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 16pt; /* 글자 크기 16pt */
+        font-weight: bold; /* 글자 강조 */
+        position: relative; /* 날짜 위치 조정 */
     }
 
-    /* 왼쪽 사이드바 */
-    .sidebar {
-      width: 200px;
-      border-right: 1px solid #000; /* 세로 구분선 */
-      padding: 20px;
-      background-color: #0a5b7f; /* 예시 파란 배경 */
-    }
-    .app {
-      background-color: #0a5b7f;
-      color: #fff;
-      border: 1px solid #ccc;
-      border-radius: 5px;
-      padding: 10px 0;
-      margin-bottom: 15px;
-      text-align: center;
-      cursor: pointer;
-    }
-    .app:hover {
-      background-color: #084b6b;
+    /* 날짜 스타일 */
+    #date {
+        position: absolute;
+        bottom: 5px;
+        right: 10px;
+        font-size: 10pt;
+        color: black;
     }
 
-    /* 오른쪽 콘텐츠 영역 */
-    .content {
-      flex: 1;
-      display: flex;           /* 가운데 정렬을 위해 flex 사용 */
-      justify-content: center; /* 수평 중앙 정렬 */
-      align-items: center;     /* 수직 중앙 정렬 */
+    /* 시간 스타일 */
+    #time {
+        position: absolute;
+        bottom: 5px;
+        left: 10px;
+        font-size: 10pt;
+        color: blue;
     }
 
-    /* 빨간색 타원 영역 */
-    .ellipse {
-      width: 500px;
-      height: 300px;
-      border: 2px solid red;
-      border-radius: 50%;
-      display: flex;           /* 안쪽 내용도 가운데 정렬 */
-      justify-content: center; 
-      align-items: center;
-      text-align: center;      /* 텍스트 가운데 정렬 */
+    #content {
+        width: 100%;
+        height: calc(100vh - 100px); /* top을 제외한 나머지 높이 */
+        display: flex;
     }
 
-    /* 타원 내부 컨텐츠 */
-    #content-area {
-      padding: 20px;
+    #screen_left {
+        width: 200px;
+        height: 100%;
+        background-color: white;
+        border-right: 1px solid black; /* 오른쪽 경계선 추가 */
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding-top: 20px;
     }
-  </style>
+
+    /* 버튼 스타일 */
+    .app-button {
+        width: 150px;
+        height: 40px;
+        font-size: 14pt;
+        font-weight: bold;
+        background-color: white; /* 버튼 배경 흰색 */
+        border: 1px solid black;
+        border-radius: 10px; /* 버튼 모서리 둥글게 */
+        cursor: pointer;
+        margin-bottom: 10px;
+        transition: background-color 0.3s ease, transform 0.1s ease;
+    }
+
+    .app-button:hover {
+        background-color: gray; /* 마우스 오버 시 배경색 */
+    }
+
+    .app-button:active {
+        transform: scale(0.95); /* 클릭 시 버튼이 살짝 줄어드는 효과 */
+    }
+
+    #screenright {
+        flex-grow: 1; /* 남은 공간 차지 */
+        height: 100%;
+        background-color: white;
+        border-left: 1px solid black; /* 왼쪽 경계선 추가 */
+    }
+
+    /* iframe 스타일 */
+    #appFrame {
+        width: 100%;
+        height: 100%;
+        border: none;
+    }
+</style>
 </head>
 <body>
-  <!-- 상단 헤더 -->
-  <div class="header">
-    <h1>Creo.js test</h1>
-  </div>
-
-  <!-- 메인(왼쪽 사이드바 + 오른쪽 콘텐츠) -->
-  <div class="main">
-    <!-- 왼쪽 사이드바 -->
-    <div class="sidebar">
-      <div class="app" onclick="showContent('APP01')">APP01</div>
-      <div class="app" onclick="showContent('APP02')">APP02</div>
-      <div class="app" onclick="showContent('APP03')">APP03</div>
-    </div>
-
-    <!-- 오른쪽 콘텐츠 영역 -->
-    <div class="content">
-      <!-- 빨간색 타원 -->
-      <div class="ellipse">
-        <div id="content-area">
-          <!-- 버튼 클릭 시 이곳에 내용이 표시됩니다. -->
-          <p style="color: gray;">여기를 클릭해도 아무 일도 일어나지 않습니다.<br>
-          왼쪽 버튼을 클릭해 보세요.</p>
+    <div id="full">
+        <div id="top">
+            Creo.JS 테스트에 오신것을 환영합니다!
+            <div id="time"></div> <!-- 시간을 표시할 요소 -->
+            <div id="date"></div> <!-- 날짜를 표시할 요소 -->
         </div>
-      </div>
+        <div id="content">
+            <!-- 왼쪽 메뉴 -->
+            <div id="screen_left">
+                <button class="app-button" onclick="loadApp('app01.html')">APP01</button>
+            </div>
+            <!-- 오른쪽 화면 -->
+            <div id="screenright">
+                <iframe id="appFrame"></iframe>
+            </div>
+        </div>
     </div>
-  </div>
 
-  <!-- JavaScript -->
-  <script>
-    function showContent(appName) {
-      const contentArea = document.getElementById('content-area');
-      
-      switch (appName) {
-        case 'APP01':
-          contentArea.innerHTML = `
-            <h2>APP01 내용</h2>
-            <p>이곳에 APP01 관련 정보를 표시할 수 있습니다.</p>
-          `;
-          break;
-        case 'APP02':
-          contentArea.innerHTML = `
-            <h2>APP02 내용</h2>
-            <p>이곳에 APP02 관련 정보를 표시할 수 있습니다.</p>
-          `;
-          break;
-        case 'APP03':
-          contentArea.innerHTML = `
-            <h2>APP03 내용</h2>
-            <p>이곳에 APP03 관련 정보를 표시할 수 있습니다.</p>
-          `;
-          break;
-        default:
-          contentArea.innerHTML = `<p>잘못된 요청입니다.</p>`;
-          break;
-      }
-    }
-  </script>
+    <script>
+        // 한국어 요일 변환
+        function getKoreanDayOfWeek(dayIndex) {
+            const days = ["일요일", "월요일", "화요일", "수요일", "목요일", "금요일", "토요일"];
+            return days[dayIndex];
+        }
+
+        // 오늘 날짜 가져오기 (YYYY-MM-DD (요일) 형식)
+        function getTodayDate() {
+            const today = new Date();
+            const year = today.getFullYear();
+            const month = String(today.getMonth() + 1).padStart(2, '0'); // 월 (2자리)
+            const day = String(today.getDate()).padStart(2, '0'); // 일 (2자리)
+            const dayOfWeek = getKoreanDayOfWeek(today.getDay());
+            return `${year}-${month}-${day} (${dayOfWeek})`;
+        }
+
+        // 현재 시간 가져오기 (HH:MM:SS 형식)
+        function getCurrentTime() {
+            const now = new Date();
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const seconds = String(now.getSeconds()).padStart(2, '0');
+            return `${hours}:${minutes}:${seconds}`;
+        }
+
+        // 시간 업데이트 함수 (1초마다 실행)
+        function updateTime() {
+            document.getElementById('time').innerText = getCurrentTime();
+        }
+
+        // APP01 실행 함수
+        function loadApp(url) {
+            document.getElementById('appFrame').src = url;
+        }
+
+        // 페이지 로드 시 날짜와 시간 설정
+        document.getElementById('date').innerText = getTodayDate();
+        updateTime(); // 초기 시간 표시
+        setInterval(updateTime, 1000); // 1초마다 시간 갱신
+    </script>
 </body>
 </html>
