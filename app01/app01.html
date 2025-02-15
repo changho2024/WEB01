@@ -1,1 +1,116 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Obj, Mtl 파일 드래그 & 드롭 업로드</title>
+<style>
+  #drop-area {
+    border: 2px dashed #ccc;
+    border-radius: 20px;
+    padding: 20px;
+    text-align: center;
+    cursor: pointer;
+  }
+  #drop-area.highlight {
+    border-color: #09f;
+  }
+  #fileElem {
+    display: none;
+  }
+</style>
+</head>
+<body>
 
+<h1>Obj, Mtl 파일 드래그 & 드롭 업로드</h1>
+
+<div id="drop-area">
+  <p>파일을 드래그 & 드롭하거나 클릭하여 선택하세요.</p>
+  <input type="file" id="fileElem" multiple accept=".obj, .mtl">
+</div>
+
+<script>
+const dropArea = document.getElementById('drop-area');
+const fileElem = document.getElementById('fileElem');
+
+// 드래그 앤 드롭 이벤트 처리
+['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+  dropArea.addEventListener(eventName, preventDefaults, false)
+})
+
+function preventDefaults (e) {
+  e.preventDefault()
+  e.stopPropagation()
+}
+
+['dragenter', 'dragover'].forEach(eventName => {
+  dropArea.addEventListener(eventName, highlight, false)
+})
+
+['dragleave', 'drop'].forEach(eventName => {
+  dropArea.addEventListener(eventName, unhighlight, false)
+})
+
+function highlight(e) {
+  dropArea.classList.add('highlight')
+}
+
+function unhighlight(e) {
+  dropArea.classList.remove('highlight')
+}
+
+dropArea.addEventListener('drop', handleDrop, false)
+
+function handleDrop(e) {
+  let dt = e.dataTransfer
+  let files = dt.files
+
+  handleFiles(files)
+}
+
+// 파일 선택 시 이벤트 처리
+fileElem.addEventListener('change', (e) => {
+  const files = e.target.files;
+  handleFiles(files);
+});
+
+
+function handleFiles(files) {
+  for (let i = 0; i < files.length; i++) {
+    let file = files[i];
+
+    // 파일 타입 및 확장자 검사 (obj, mtl 파일만 허용)
+    if (!file.type.startsWith('application/octet-stream') && // obj 파일
+        !file.name.endsWith('.obj') &&
+        !file.type.startsWith('text/plain') && // mtl 파일
+        !file.name.endsWith('.mtl')) {
+      alert('obj, mtl 파일만 업로드 가능합니다.');
+      return;
+    }
+
+    // 파일 업로드 처리
+    uploadFile(file);
+  }
+}
+
+function uploadFile(file) {
+  let formData = new FormData();
+  formData.append('file', file);
+
+  fetch('./upload', { // 서버 업로드 URL
+    method: 'POST',
+    body: formData
+  })
+  .then(response => {
+    if (response.ok) {
+      alert('파일 업로드 성공: ' + file.name);
+    } else {
+      alert('파일 업로드 실패: ' + file.name);
+    }
+  })
+  .catch(error => {
+    alert('파일 업로드 중 오류 발생: ' + error);
+  });
+}
+</script>
+
+</body>
+</html>
