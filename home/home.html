@@ -10,41 +10,35 @@
             font-family: Arial, sans-serif;
             margin: 20px;
         }
+
         .container {
             border: 1px solid #ccc;
             padding: 20px;
             width: 600px;
         }
+
         .input-container {
             margin-top: 10px;
         }
+
         button {
             padding: 6px 25px;
             font-size: 16px;
             margin-top: 10px;
             cursor: pointer;
         }
+
         input[type="text"] {
             width: 400px;
             padding: 10px;
             font-size: 14px;
             box-sizing: border-box;
+            background-color: #f5f5f5;
+            border: 1px solid #ccc;
         }
     </style>
     <script src="../creojs.js"></script>
     <script type="text/creojs" src="../browser.creojs"></script>
-    <script type="text/creojs">
-        async function getActiveModelName() {
-            try {
-                const session = await pfcGetCurrentSession();
-                const model = await session.GetActiveModel();
-                return model.FileName;
-            } catch (error) {
-                console.error("Error getting active model:", error);
-                return "Error";
-            }
-        }
-    </script>
 </head>
 <body>
     <div class="container">
@@ -53,16 +47,21 @@
             <label for="modelName">Model Name:</label>
             <input type="text" id="modelName" readonly>
         </div>
-        <button onclick="getCurrentModel()">Get Current Model</button>
-        <button onclick="clearModelName()">Clear Model Name</button>
+        <button onclick="fetchModelName()">Get Current Model</button>
+        <button onclick="clearModelName()">Clear</button>
     </div>
+
     <script>
-        async function getCurrentModel() {
+        async function fetchModelName() {
             try {
-                const name = await getActiveModelName();
-                document.getElementById("modelName").value = name;
+                const modelName = await CreoJS.eval(`
+                    var session = pfcGetCurrentSession();
+                    var model = session.GetActiveModel();
+                    model ? model.FileName : "No Active Model"
+                `);
+                document.getElementById("modelName").value = modelName;
             } catch (error) {
-                console.error("Failed to retrieve model name:", error);
+                alert("Error fetching model name: " + error.message);
             }
         }
 
