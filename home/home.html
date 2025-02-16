@@ -35,32 +35,7 @@
             box-sizing: border-box;
         }
     </style>
-    <script>
-        function getCurrentModel() {
-            // Check if pfcGetCurrentSession is defined (likely from a Creo environment)
-            if (typeof pfcGetCurrentSession !== 'undefined') {
-                try {
-                    let Basesession = pfcGetCurrentSession();
-                    let Model = Basesession.CurrentModel;
-                    if (Model && Model.FileName) {
-                        document.getElementById("modelName").value = Model.FileName;
-                    } else {
-                      document.getElementById("modelName").value = "No model found or FileName property is not available.";
-                    }
-                } catch (error) {
-                    document.getElementById("modelName").value = "Error: " + error.message;  // Display error message
-                    console.error("Error getting model:", error); // Log the error to the console for debugging
-                }
-            } else {
-                document.getElementById("modelName").value = "pfcGetCurrentSession is not defined. Are you in a Creo environment?";
-            }
-        }
-
-        function clearModelName() {
-            document.getElementById("modelName").value = "";
-        }
-    </script>
-</head>
+    <script src="creo.js"></script>  </head>
 
 <body>
     <div class="container">
@@ -72,6 +47,30 @@
         <button onclick="getCurrentModel()">Get Current Model</button>
         <button onclick="clearModelName()">Clear Model Name</button>
     </div>
+
+    <script>
+        function getCurrentModel() {
+            if (typeof Creo !== 'undefined' && typeof Creo.GetCurrentModel === 'function') { // Check Creo object
+                try {
+                    const modelName = Creo.GetCurrentModel(); // Call Creo.GetCurrentModel
+                    if (modelName) {
+                        document.getElementById("modelName").value = modelName;
+                    } else {
+                        document.getElementById("modelName").value = "No model found or name is unavailable.";
+                    }
+                } catch (error) {
+                    document.getElementById("modelName").value = "Error: " + error.message;
+                    console.error("Error getting model:", error);
+                }
+            } else {
+                document.getElementById("modelName").value = "Creo object or GetCurrentModel function is not defined. Is creo.js loaded and are you in a Creo environment?";
+            }
+        }
+
+        function clearModelName() {
+            document.getElementById("modelName").value = "";
+        }
+    </script>
 </body>
 
 </html>
