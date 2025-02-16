@@ -1,116 +1,75 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Obj, Mtl 파일 드래그 & 드롭 업로드</title>
-<style>
-  #drop-area {
-    border: 2px dashed #ccc;
-    border-radius: 20px;
-    padding: 20px;
-    text-align: center;
-    cursor: pointer;
-  }
-  #drop-area.highlight {
-    border-color: #09f;
-  }
-  #fileElem {
-    display: none;
-  }
-</style>
+    <title>Babylon.js Sandbox Clone</title>
+    <script src="https://cdn.babylonjs.com/babylon.js"></script>
+    <script src="https://cdn.babylonjs.com/loaders/babylonjs.loaders.min.js"></script>
+    <style>
+        body, #renderCanvas { 
+            width: 100%; 
+            height: 100%; 
+            margin: 0; 
+            overflow: hidden; 
+        }
+    </style>
 </head>
 <body>
+    <canvas id="renderCanvas"></canvas>
+    <script>
+        const canvas = document.getElementById("renderCanvas");
+        const engine = new BABYLON.Engine(canvas, true);
 
-<h1>Obj, Mtl 파일 드래그 & 드롭 업로드</h1>
+        // 씬 생성 함수
+        const createScene = () => {
+            const scene = new BABYLON.Scene(engine);
+            scene.clearColor = new BABYLON.Color3(0.2, 0.2, 0.2);
 
-<div id="drop-area">
-  <p>파일을 드래그 & 드롭하거나 클릭하여 선택하세요.</p>
-  <input type="file" id="fileElem" multiple accept=".obj, .mtl">
-</div>
+            // 카메라 설정 (ArcRotateCamera)
+            const camera = new BABYLON.ArcRotateCamera(
+                "camera",
+                -Math.PI / 2,
+                Math.PI / 2.5,
+                10,
+                BABYLON.Vector3.Zero(),
+                scene
+            );
+            camera.attachControl(canvas, true);
 
-<script>
-const dropArea = document.getElementById('drop-area');
-const fileElem = document.getElementById('fileElem');
+            // 조명 추가 (HemisphericLight)
+            const light = new BABYLON.HemisphericLight(
+                "light",
+                new BABYLON.Vector3(1, 1, 0),
+                scene
+            );
+            light.intensity = 0.7;
 
-// 드래그 앤 드롭 이벤트 처리
-['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-  dropArea.addEventListener(eventName, preventDefaults, false)
-})
+            // 환경 맵 로딩
+            const hdrTexture = BABYLON.CubeTexture.CreateFromPrefilteredData(
+                "https://assets.babylonjs.com/environments/environmentSpecular.dds",
+                scene
+            );
+            scene.environmentTexture = hdrTexture;
 
-function preventDefaults (e) {
-  e.preventDefault()
-  e.stopPropagation()
-}
+            // 3D 모델 로딩 (glTF 형식 지원)
+            BABYLON.SceneLoader.ImportMesh(
+                "",
+                "https://assets.babylonjs.com/meshes/",
+                "box.glb",
+                scene,
+                (meshes) => {
+                    console.log("모델 로드 완료:", meshes);
+                }
+            );
 
-['dragenter', 'dragover'].forEach(eventName => {
-  dropArea.addEventListener(eventName, highlight, false)
-})
+            return scene;
+        };
 
-['dragleave', 'drop'].forEach(eventName => {
-  dropArea.addEventListener(eventName, unhighlight, false)
-})
+        // 렌더링 루프 시작
+        const scene = createScene();
+        engine.runRenderLoop(() => scene.render());
 
-function highlight(e) {
-  dropArea.classList.add('highlight')
-}
-
-function unhighlight(e) {
-  dropArea.classList.remove('highlight')
-}
-
-dropArea.addEventListener('drop', handleDrop, false)
-
-function handleDrop(e) {
-  let dt = e.dataTransfer
-  let files = dt.files
-
-  handleFiles(files)
-}
-
-// 파일 선택 시 이벤트 처리
-fileElem.addEventListener('change', (e) => {
-  const files = e.target.files;
-  handleFiles(files);
-});
-
-
-function handleFiles(files) {
-  for (let i = 0; i < files.length; i++) {
-    let file = files[i];
-
-    // 파일 타입 및 확장자 검사 (obj, mtl 파일만 허용)
-    if (!file.type.startsWith('application/octet-stream') && // obj 파일
-        !file.name.endsWith('.obj') &&
-        !file.type.startsWith('text/plain') && // mtl 파일
-        !file.name.endsWith('.mtl')) {
-      alert('obj, mtl 파일만 업로드 가능합니다.');
-      return;
-    }
-
-    // 파일 업로드 처리
-    uploadFile(file);
-  }
-}
-
-function uploadFile(file) {
-  let formData = new FormData();
-  formData.append('file', file);
-
-  fetch('./upload', { // 서버 업로드 URL
-    method: 'POST',
-    body: formData
-  })
-  .then(response => {
-    if (response.ok) {
-      alert('파일 업로드 성공: ' + file.name);
-    } else {
-      alert('파일 업로드 실패: ' + file.name);
-    }
-  })
-  .catch(error => {
-    alert('파일 업로드 중 오류 발생: ' + error);
-  });
-}
-</script>
-
+        // 창 크기 변경 대응
+        window.addEventListener("resize", () => engine.resize());
+    </script>
 </body>
 </html>
