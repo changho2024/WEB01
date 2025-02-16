@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Get Current Model</title>
     <style>
@@ -35,7 +35,7 @@
             box-sizing: border-box;
         }
     </style>
-    <script src="./creojs.js" defer></script> 
+    <script src="../creojs.js" defer></script> 
 </head>
 
 <body>
@@ -53,16 +53,32 @@
         async function getCurrentModel() {
             const modelNameInput = document.getElementById("modelName");
 
-            // Creo 객체가 존재하는지 확인
-            if (!window.Creo || typeof window.Creo.GetCurrentModel !== 'function') {
+            // Creo API가 로드되었는지 확인
+            if (!window.pfc) {
                 modelNameInput.value = "Creo API가 로드되지 않았거나 사용할 수 없습니다.";
-                console.warn("Creo 객체 또는 GetCurrentModel 함수가 정의되지 않았습니다.");
+                console.warn("Creo API가 로드되지 않았거나 정의되지 않았습니다.");
                 return;
             }
 
             try {
-                const modelName = await window.Creo.GetCurrentModel(); // 비동기 함수로 호출
-                modelNameInput.value = modelName ? modelName : "No model found or name is unavailable.";
+                // 현재 Creo 세션 가져오기
+                const session = await pfcGetCurrentSession();
+                if (!session) {
+                    modelNameInput.value = "Creo 세션을 가져올 수 없습니다.";
+                    return;
+                }
+
+                // 현재 모델 가져오기
+                const model = session.CurrentModel;
+                if (!model) {
+                    modelNameInput.value = "현재 활성 모델이 없습니다.";
+                    return;
+                }
+
+                // 모델 이름 출력
+                modelNameInput.value = model.FileName;
+                console.log("현재 모델:", model.FileName);
+
             } catch (error) {
                 modelNameInput.value = "Error: " + error.message;
                 console.error("Error getting model:", error);
