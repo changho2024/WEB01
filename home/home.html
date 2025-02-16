@@ -1,11 +1,77 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko">
+
 <head>
     <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Get Current Model</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+
+        .container {
+            border: 1px solid #ccc;
+            padding: 20px;
+            width: 600px;
+        }
+
+        .input-container {
+            margin-top: 10px;
+        }
+
+        button {
+            padding: 6px 25px;
+            font-size: 16px;
+            margin-top: 10px;
+        }
+
+        input[type="text"] {
+            width: 400px;
+            padding: 10px;
+            font-size: 14px;
+            box-sizing: border-box;
+        }
+    </style>
+    <script>
+        function getCurrentModel() {
+            // Check if pfcGetCurrentSession is defined (likely from a Creo environment)
+            if (typeof pfcGetCurrentSession !== 'undefined') {
+                try {
+                    let Basesession = pfcGetCurrentSession();
+                    let Model = Basesession.CurrentModel;
+                    if (Model && Model.FileName) {
+                        document.getElementById("modelName").value = Model.FileName;
+                    } else {
+                      document.getElementById("modelName").value = "No model found or FileName property is not available.";
+                    }
+                } catch (error) {
+                    document.getElementById("modelName").value = "Error: " + error.message;  // Display error message
+                    console.error("Error getting model:", error); // Log the error to the console for debugging
+                }
+            } else {
+                document.getElementById("modelName").value = "pfcGetCurrentSession is not defined. Are you in a Creo environment?";
+            }
+        }
+
+        function clearModelName() {
+            document.getElementById("modelName").value = "";
+        }
+    </script>
 </head>
+
 <body>
-    <h2> test</h2>
+    <div class="container">
+        <h3>Get Current Model</h3>
+        <div class="input-container">
+            <label for="modelName">Model Name:</label>
+            <input type="text" id="modelName" readonly>
+        </div>
+        <button onclick="getCurrentModel()">Get Current Model</button>
+        <button onclick="clearModelName()">Clear Model Name</button>
+    </div>
 </body>
+
 </html>
