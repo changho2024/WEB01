@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="ko">
-
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -26,6 +25,7 @@
             padding: 6px 25px;
             font-size: 16px;
             margin-top: 10px;
+            cursor: pointer;
         }
 
         input[type="text"] {
@@ -35,7 +35,8 @@
             box-sizing: border-box;
         }
     </style>
-    <script src="./creojs.js"></script>  </head>
+    <script src="./creojs.js" defer></script> 
+</head>
 
 <body>
     <div class="container">
@@ -49,21 +50,22 @@
     </div>
 
     <script>
-        function getCurrentModel() {
-            if (typeof Creo !== 'undefined' && typeof Creo.GetCurrentModel === 'function') { // Check Creo object
-                try {
-                    const modelName = Creo.GetCurrentModel(); // Call Creo.GetCurrentModel
-                    if (modelName) {
-                        document.getElementById("modelName").value = modelName;
-                    } else {
-                        document.getElementById("modelName").value = "No model found or name is unavailable.";
-                    }
-                } catch (error) {
-                    document.getElementById("modelName").value = "Error: " + error.message;
-                    console.error("Error getting model:", error);
-                }
-            } else {
-                document.getElementById("modelName").value = "Creo object or GetCurrentModel function is not defined. Is creo.js loaded and are you in a Creo environment?";
+        async function getCurrentModel() {
+            const modelNameInput = document.getElementById("modelName");
+
+            // Creo 객체가 존재하는지 확인
+            if (!window.Creo || typeof window.Creo.GetCurrentModel !== 'function') {
+                modelNameInput.value = "Creo API가 로드되지 않았거나 사용할 수 없습니다.";
+                console.warn("Creo 객체 또는 GetCurrentModel 함수가 정의되지 않았습니다.");
+                return;
+            }
+
+            try {
+                const modelName = await window.Creo.GetCurrentModel(); // 비동기 함수로 호출
+                modelNameInput.value = modelName ? modelName : "No model found or name is unavailable.";
+            } catch (error) {
+                modelNameInput.value = "Error: " + error.message;
+                console.error("Error getting model:", error);
             }
         }
 
@@ -72,5 +74,4 @@
         }
     </script>
 </body>
-
 </html>
