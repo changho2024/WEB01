@@ -1,0 +1,87 @@
+﻿newmtl DEFAULT_MTL
+Kd 0.635 0.686 0.749
+
+newmtl MTL0 
+Kd 1.000 1.000 1.000
+
+newmtl MTL1 
+Kd 0.980 0.627 0.000
+
+newmtl MTL2 
+Kd 0.471 1.000 1.000
+
+newmtl MTL3 
+Kd 0.118 0.519 0.370
+
+newmtl MTL4 
+Kd 0.180 0.635 0.706
+
+newmtl MTL5 
+Kd 0.540 0.900 0.944
+
+newmtl MTL6 
+Kd 0.950 0.741 0.000
+
+newmtl MTL7 
+Kd 0.888 1.000 0.440
+
+newmtl MTL8 
+Kd 0.000 1.000 0.000
+
+newmtl MTL9 
+Kd 0.880 1.000 0.000
+
+newmtl MTL10 
+Kd 1.000 0.820 1.000
+
+newmtl MTL11 
+Kd 0.637 0.800 0.981
+
+newmtl MTL12 
+Kd 0.686 0.581 0.908
+
+newmtl MTL13 
+Kd 0.480 0.640 0.960
+
+newmtl MTL14 
+Kd 0.253 0.790 0.398
+
+newmtl MTL15 
+Kd 0.770 0.680 0.245
+
+newmtl MTL16 
+Kd 1.000 0.948 0.899
+
+newmtl MTL17 
+Kd 0.141 0.151 0.160
+
+newmtl MTL18 
+Kd 0.000 0.000 0.000
+
+newmtl MTL19 
+Kd 0.790 0.186 0.523
+
+newmtl MTL20 
+Kd 0.011 0.012 1.000
+
+newmtl MTL21 
+Kd 0.980 0.820 0.650
+
+newmtl MTL22 
+Kd 0.640 0.820 0.780
+
+newmtl MTL23 
+Kd 0.390 1.000 0.550
+
+newmtl MTL24 
+Kd 0.510 0.627 0.000
+
+newmtl MTL25 
+Kd 0.600 0.600 1.000
+
+newmtl MTL26 
+Kd 1.000 1.000 0.000
+
+newmtl MTL27 
+Kd 0.730 0.730 0.730
+
