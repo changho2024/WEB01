@@ -10,24 +10,20 @@
             font-family: Arial, sans-serif;
             margin: 20px;
         }
-
         .container {
             border: 1px solid #ccc;
             padding: 20px;
             width: 600px;
         }
-
         .input-container {
             margin-top: 10px;
         }
-
         button {
             padding: 6px 25px;
             font-size: 16px;
             margin-top: 10px;
             cursor: pointer;
         }
-
         input[type="text"] {
             width: 400px;
             padding: 10px;
@@ -35,10 +31,13 @@
             box-sizing: border-box;
         }
     </style>
-    <script src="../creojs.js" defer></script>
-    <script src="../creojsunit.js" defer></script>
+    <script type="text/creojs" src="../browser.creojs"></script>
+    <script type="text/creojs">
+        function getActiveModelName () {
+            return pfcGetCurrentSession().GetActiveModel().FileName;
+        }
+    </script>
 </head>
-
 <body>
     <div class="container">
         <h3>Get Current Model</h3>
@@ -51,39 +50,16 @@
     </div>
 
     <script>
-        async function getCurrentModel() {
-            const modelNameInput = document.getElementById("modelName");
-
-            // Creo API가 로드되었는지 확인
-            if (!window.pfc) {
-                modelNameInput.value = "Creo API가 로드되지 않았거나 사용할 수 없습니다.";
-                console.warn("Creo API가 로드되지 않았거나 정의되지 않았습니다.");
-                return;
-            }
-
-            try {
-                // 현재 Creo 세션 가져오기
-                const session = await pfcGetCurrentSession();
-                if (!session) {
-                    modelNameInput.value = "Creo 세션을 가져올 수 없습니다.";
-                    return;
-                }
-
-                // 현재 모델 가져오기
-                const model = session.CurrentModel;
-                if (!model) {
-                    modelNameInput.value = "현재 활성 모델이 없습니다.";
-                    return;
-                }
-
-                // 모델 이름 출력
-                modelNameInput.value = model.FileName;
-                console.log("현재 모델:", model.FileName);
-
-            } catch (error) {
-                modelNameInput.value = "Error: " + error.message;
-                console.error("Error getting model:", error);
-            }
+        function getCurrentModel() {
+            // CreoJS.getActiveModelName()를 호출하여 파일 이름을 가져온 후 input 요소에 표시
+            CreoJS.getActiveModelName()
+                .then(function(name) {
+                    document.getElementById("modelName").value = name;
+                })
+                .catch(function(error) {
+                    document.getElementById("modelName").value = "Error: " + error.message;
+                    console.error("Error getting model:", error);
+                });
         }
 
         function clearModelName() {
